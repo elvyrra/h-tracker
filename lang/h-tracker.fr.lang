@@ -1,0 +1,81 @@
+; MENU ITEMS
+main-menu-title = "Gestionnaire de tickets"
+menu-project-title = "Projets"
+menu-ticket-title = "Tickets"
+
+; TICKETS LIST
+ticket-list-title = "Mes tickets"
+new-ticket-btn = "Nouveau ticket"
+no-project-created = "Veuillez créer un projet pour pouvoir créer un ticket"
+ticket-list-id-label = "Numéro"
+ticket-list-title-label = "Titre"
+ticket-list-project-label = "Projet"
+ticket-list-status-label = "Status"
+ticket-list-target-label = "Assigné à"
+ticket-list-mtime-label = "Dernière modif."
+ticket-list-priority-label = "Priorité"
+
+; TICKET FORM
+ticket-new-form-title = "Nouveau ticket"
+ticket-form-title = "Ticket n° #{id}"
+ticket-form-project-label = "Projet"
+ticket-form-title-label = "Titre"
+ticket-form-description-label = "Description"
+ticket-form-priority-label = "Priorité"
+ticket-form-author-label = "Auteur"
+ticket-form-status-label = "Status"
+ticket-form-target-label = "Assigné à"
+ticket-form-dead-line-label = "A faire pour le"
+
+; TICKETS FILTER
+ticket-filter-title = "Filtrer par status"
+
+; TICKET PRIORITIES
+ticket-priority-0 = "Critique"
+ticket-priority-1 = "Urgente"
+ticket-priority-2 = "Majeure"
+ticket-priority-3 = "Haute"
+ticket-priority-4 = "Moyenne"
+ticket-priority-5 = "Basse"
+ticket-priority-6 = "Non urgente"
+ticket-priority-7 = "Reporté"
+
+; TICKET COMMENTS LIST
+new-comment-btn = "Ajouter un commentaire"
+ticket-history-description-label = "Message"
+ticket-history-author-label = "Auteur"
+ticket-history-ctime-label = "Créé le"
+status-change-comment = "Le statut est passé de '{oldValue}' en '{newValue}'"
+title-change-comment = "Le titre du ticket a été modifié"
+description-change-comment = "La description du ticket a été modifiée"
+deadLine-change-comment = "La date buttoire est passée de '{oldValue}' en '{newValue}'"
+target-change-comment = "La personne en charge est passée de '{oldValue}' en '{newValue}'"
+
+; TICKET COMMENT FORM
+ticket-comment-form-title = "Ajouter un commentaire au ticket"
+
+
+; PROJECTS LIST
+project-list-title = "Mes projets"
+view-ticket-btn = "Voir les tickets"
+new-project-btn = "Nouveau projet"
+project-list-name-label = "Nom"
+project-list-description-label = "Description"
+project-list-author-label = "Auteur"
+project-list-ctime-label = "Créé le"
+
+; PROJECT FORM
+project-form-title = "Edition d'un projet"
+project-form-name-label = "Nom du projet"
+project-form-description-label = "Description"
+project-form-author-label = "Auteur"
+
+
+; PERMISSIONS
+permission-name-manage-ticket = "Gestion des tickets"
+
+; SETTINGS
+settings-status-legend = "Statut d'un ticket"
+settings-status-intro = "Gérez ici les différents statuts que vous voulez appliquer aux tickets dans le cadre de votre activité, et triez-les dans l'ordre le plus adapté à vos besoins."
+settings-add-status-btn = "Ajouter"
+settings-confirm-delete-status = "Voulez-vous réellement supprimer ce statut de ticket ? Si oui, tous les tickets ayant actuellement ce statut se retrouveront sans statut"

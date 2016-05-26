@@ -1,0 +1,81 @@
+; MENU ITEMS
+main-menu-title = "Ticket manager"
+menu-project-title = "Projects"
+menu-ticket-title = "Tickets"
+
+; TICKETS LIST
+ticket-list-title = "My tickets"
+new-ticket-btn = "New ticket"
+no-project-created = "You need create a project first, to be able to create a ticket"
+ticket-list-id-label = "Number"
+ticket-list-title-label = "Title"
+ticket-list-project-label = "Project"
+ticket-list-status-label = "Status"
+ticket-list-target-label = "Assinged to"
+ticket-list-mtime-label = "Last modif."
+ticket-list-priority-label = "Priority"
+
+; TICKET FORM
+ticket-new-form-title = "New ticket"
+ticket-form-title = "Ticket n° #{id}"
+ticket-form-project-label = "Project"
+ticket-form-title-label = "Title"
+ticket-form-description-label = "Description"
+ticket-form-priority-label = "Priority"
+ticket-form-author-label = "Author"
+ticket-form-status-label = "Status"
+ticket-form-target-label = "Assigned to"
+ticket-form-dead-line-label = "To be done on"
+
+; TICKETS FILTER
+ticket-filter-title = "Filter by status"
+
+; TICKET PRIORITIES
+ticket-priority-0 = "Critcal"
+ticket-priority-1 = "Urgent"
+ticket-priority-2 = "Major"
+ticket-priority-3 = "High"
+ticket-priority-4 = "Medium"
+ticket-priority-5 = "Low"
+ticket-priority-6 = "Non urgent"
+ticket-priority-7 = "Postponed"
+
+; TICKET COMMENTS LIST
+new-comment-btn = "Add a comment"
+ticket-history-description-label = "Message"
+ticket-history-author-label = "Author"
+ticket-history-ctime-label = "Created on"
+status-change-comment = "The status changed from '{oldValue}' to '{newValue}'"
+title-change-comment = "The ticket title changed"
+description-change-comment = "the ticket description changed"
+deadLine-change-comment = "The deadlin changed from '{oldValue}' to '{newValue}'"
+target-change-comment = "The assigned person changed from '{oldValue}' to '{newValue}'"
+
+; TICKET COMMENT FORM
+ticket-comment-form-title = "Add a comment to the ticket"
+
+
+; PROJECTS LIST
+project-list-title = "My projects"
+view-ticket-btn = "See the ticjets"
+new-project-btn = "New project"
+project-list-name-label = "Name"
+project-list-description-label = "Description"
+project-list-author-label = "Author"
+project-list-ctime-label = "Created on"
+
+; PROJECT FORM
+project-form-title = "Edit a projec"
+project-form-name-label = "Project name"
+project-form-description-label = "Description"
+project-form-author-label = "Author"
+
+
+; PERMISSIONS
+permission-name-manage-ticket = "Manage the tickets"
+
+; SETTINGS
+settings-status-legend = "Ticket status"
+settings-status-intro = "Here you can manage the different status a ticket can be applied for your activity, and order them."
+settings-add-status-btn = "Add"
+settings-confirm-delete-status = "do you really want to delete this status ? If you do, all the ticket with this status won't have status anymore"
