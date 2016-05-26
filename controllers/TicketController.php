@@ -143,7 +143,7 @@ class TicketController extends Controller {
                     'content' => $list->display()
                 ),
                 'sidebar' => array(
-                    'widgets' => array(new TicketFilterWidget()),
+                    'widgets' => array(TicketFilterWidget::getInstance()),
                 ),
                 'title' => Lang::get($this->_plugin.'.ticket-list-title'),
                 'icon' => 'book',
