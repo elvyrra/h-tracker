@@ -65,7 +65,7 @@ class ProjectController extends Controller{
             return NoSidebarTab::make(array(
                 'page' => $list->display(),
                 'title' => Lang::get($this->_plugin . '.project-list-title'),
-                'icon' => 'cubes'
+                'icon' => $this->getPlugin()->getFaviconUrl()
             ));
         }
         else {

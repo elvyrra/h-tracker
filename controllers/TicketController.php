@@ -146,7 +146,7 @@ class TicketController extends Controller {
                     'widgets' => array(TicketFilterWidget::getInstance()),
                 ),
                 'title' => Lang::get($this->_plugin.'.ticket-list-title'),
-                'icon' => 'book',
+                'icon' => $this->getPlugin()->getFaviconUrl(),
             ));
         }
         else {
