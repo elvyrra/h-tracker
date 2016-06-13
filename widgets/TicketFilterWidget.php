@@ -15,8 +15,7 @@ class TicketFilterWidget extends Widget
     public static $filters = array('status');
 
 
-    public function getFilters()
-    {
+    public function getFilters() {
 
         if(App::request()->getHeaders('X-List-Filter')) {
             App::session()->getUser()->setOption($this->_plugin . '.ticket-list-filter', App::request()->getHeaders('X-List-Filter'));
@@ -29,11 +28,10 @@ class TicketFilterWidget extends Widget
 
         return($result);
 
-    }//end getFilters()
+    }
 
 
-    public function display()
-    {
+    public function display() {
         $filters = $this->getFilters();
 
         $form = new Form(array(

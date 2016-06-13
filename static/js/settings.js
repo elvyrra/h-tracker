@@ -92,7 +92,7 @@ require(['app'], function() {
     };
 
     StatusModel.prototype.remove = function(item) {
-        if(confirm(Lang.get('ticket.settings-confirm-delete-status'))) {
+        if(confirm(Lang.get('h-tracker.settings-confirm-delete-status'))) {
             this.options.splice(this.options().indexOf(item), 1);
         }
     };

@@ -129,6 +129,7 @@ class TicketController extends Controller {
             )
         );
 
+
         $list = new ItemList($param);
 
         if(!$list->isRefreshing()) {
@@ -202,9 +203,10 @@ class TicketController extends Controller {
                     )),
 
                     new SelectInput(array(
-                        'name'    => 'target',
-                        'options' => $users,
-                        'label'   => Lang::get($this->_plugin . '.ticket-form-target-label'),
+                        'name'       => 'target',
+                        'invitation' => ' - ',
+                        'options'    => $users,
+                        'label'      => Lang::get($this->_plugin . '.ticket-form-target-label'),
                     )),
 
                     new DatetimeInput(array(
