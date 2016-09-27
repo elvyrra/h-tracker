@@ -320,7 +320,7 @@ class TicketController extends Controller {
                         $comments[] = Lang::get(
                             $this->_plugin . '.target-change-comment',
                             array(
-                                'oldValue' => empty($users[$newValue]) ? '-' : $users[$oldValue],
+                                'oldValue' => empty($users[$oldValue]) ? '-' : $users[$oldValue],
                                 'newValue' => empty($users[$newValue]) ? '-' : $users[$newValue]
                             )
                         );
