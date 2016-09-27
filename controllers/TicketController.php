@@ -80,7 +80,7 @@ class TicketController extends Controller {
                 'target' => array(
                     'label'   => Lang::get($this->_plugin . '.ticket-list-target-label'),
                     'display' => function ($value, $field, $ticket) {
-                        if(!$value) {
+                        if(empty($value)) {
                             return '';
                         }
 
