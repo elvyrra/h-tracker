@@ -10,8 +10,7 @@ namespace Hawk\Plugins\HTracker;
 /**
  * This Widget is used to filter the users list by status or role
  */
-class TicketFilterWidget extends Widget
-{
+class TicketFilterWidget extends Widget {
     public static $filters = array('status');
 
 

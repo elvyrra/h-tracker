@@ -80,6 +80,10 @@ class TicketController extends Controller {
                 'target' => array(
                     'label'   => Lang::get($this->_plugin . '.ticket-list-target-label'),
                     'display' => function ($value, $field, $ticket) {
+                        if(!$value) {
+                            return '';
+                        }
+
                         $user = User::getById($value);
                         if($user) {
                             return $user->username;
@@ -206,13 +210,14 @@ class TicketController extends Controller {
                         'name'       => 'target',
                         'invitation' => ' - ',
                         'options'    => $users,
+                        'emptyValue' => '0',
                         'label'      => Lang::get($this->_plugin . '.ticket-form-target-label'),
                     )),
 
                     new DatetimeInput(array(
                         'name'  => 'deadLine',
                         'label' => Lang::get($this->_plugin . '.ticket-form-dead-line-label'),
-                        'value' => date('Y-m-d'),
+                        'default' => date('Y-m-d'),
                     )),
 
                     new HiddenInput(array(
@@ -315,8 +320,8 @@ class TicketController extends Controller {
                         $comments[] = Lang::get(
                             $this->_plugin . '.target-change-comment',
                             array(
-                                'oldValue' => $users[$oldValue],
-                                'newValue' => $users[$newValue]
+                                'oldValue' => empty($users[$newValue]) ? '-' : $users[$oldValue],
+                                'newValue' => empty($users[$newValue]) ? '-' : $users[$newValue]
                             )
                         );
                     }
