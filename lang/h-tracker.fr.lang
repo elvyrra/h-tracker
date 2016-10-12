@@ -12,7 +12,7 @@ ticket-list-title-label = "Titre"
 ticket-list-project-label = "Projet"
 ticket-list-status-label = "Status"
 ticket-list-target-label = "Assigné à"
-ticket-list-mtime-label = "Dernière modif."
+ticket-list-deadline-label = "Date limite"
 ticket-list-priority-label = "Priorité"
 
 ; TASK FORM

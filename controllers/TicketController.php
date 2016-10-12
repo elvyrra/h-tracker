@@ -119,17 +119,16 @@ class TicketController extends Controller {
                     },
                 ),
 
-                'mtime' => array(
-                    'label'   => Lang::get($this->_plugin . '.ticket-list-mtime-label'),
+                'deadLine' => array(
+                    'label'   => Lang::get($this->_plugin . '.ticket-list-deadline-label'),
                     'display' => function ($value, $field) {
-                        return date(Lang::get('main.time-format'), $value);
+                        return date(Lang::get('main.date-format'), strtotime($value));
                     },
-                    'search'  => false,
+                    'search'  => array(
+                        'type' => 'date'
+                    )
                 ),
 
-                'deadLine' => array(
-                    'hidden' => true
-                ),
             )
         );
 

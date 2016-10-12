@@ -1,7 +1,7 @@
 {
     "title": "H Tracker",
     "description": "Ce plugin permet de gérer les tickets de plusieurs projets. Il contient : <ul><li> Gestion des projets à suivre</li><li>Suivi du statut du ticket</li><li>Personnalisation des statuts dans les paramètres du plugin.</li><li>Ajout de commentaires. </li><li> Gestion de deadlines </li><li>Criticité d'un ticket</li></ul>",
-    "version": "1.2.3",
+    "version": "1.3.0",
     "author": "Elvyrra S.A.S",
     "dependencies": [],
     "logo" : "logo.png"

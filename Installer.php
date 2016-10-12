@@ -65,6 +65,7 @@ class Installer extends PluginInstaller {
             'plugin'   => $this->_plugin,
             'name'     => 'main-ticket',
             'labelKey' => $this->_plugin.'.main-menu-title',
+            'icon'     => 'bars'
         ));
 
         MenuItem::add(array(
@@ -73,6 +74,7 @@ class Installer extends PluginInstaller {
             'labelKey' => $this->_plugin.'.menu-project-title',
             'action'   => 'htracker-project-index',
             'parentId' => $menu->id,
+            'icon' => 'cubes'
         ));
 
         MenuItem::add(array(
@@ -81,6 +83,7 @@ class Installer extends PluginInstaller {
             'labelKey' => $this->_plugin.'.menu-ticket-title',
             'action'   => 'htracker-index',
             'parentId' => $menu->id,
+            'icon' => 'tasks'
         ));
     }
 
@@ -167,5 +170,20 @@ class Installer extends PluginInstaller {
                 return $form->response(Form::STATUS_SUCCESS);
             }
         }
+    }
+
+
+    public function updateV1_3_0() {
+        $mainMenu = MenuItem::getByName($this->_plugin . '.main-ticket');
+        $mainMenu->icon = 'bars';
+        $mainMenu->save();
+
+        $projectMenu = MenuItem::getByName($this->_plugin . '.project');
+        $projectMenu->icon = 'cubes';
+        $projectMenu->save();
+
+        $taskMenu = MenuItem::getByName($this->_plugin . '.ticket');
+        $taskMenu->icon = 'tasks';
+        $taskMenu->save();
     }
 }

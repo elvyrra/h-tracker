@@ -7,7 +7,7 @@ class ProjectController extends Controller{
     /**
      * Entry point for the page of ticket projects
      */
-    public function index(){
+    public function index() {
         // Get list of all subject
         $list = new ItemList(array(
             'id' => 'htracker-project-list',
