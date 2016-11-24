@@ -122,13 +122,17 @@ class Installer extends PluginInstaller {
                         'class'      => 'btn-success',
                         'icon'       => 'plus',
                         'label'      => Lang::get($this->_plugin.'.settings-add-status-btn'),
-                        'attributes' => array('ko-click' => 'add'),
+                        'attributes' => array(
+                            'e-click' => 'add'
+                        ),
                     )),
 
                     new ObjectInput(array(
                         'name'       => 'options',
                         'hidden'     => true,
-                        'attributes' => array('ko-value' => 'ko.toJSON(options())'),
+                        'attributes' => array(
+                            'e-value' => 'options.toString()'
+                        ),
                         'default'    => Option::get($this->_plugin.'.status'),
                     ))
                 ),
@@ -152,8 +156,8 @@ class Installer extends PluginInstaller {
         $form = new Form($param);
 
         if(!$form->submitted()) {
-            Controller::current()->addJavaScript(Plugin::current()->getJsUrl('settings.js'));
-            Controller::current()->addCss(Plugin::current()->getCssUrl('settings.less'));
+            Controller::current()->addJavaScript($this->getPlugin()->getJsUrl('settings.js'));
+            Controller::current()->addCss($this->getPlugin()->getCssUrl('settings.less'));
             Controller::current()->addKeysToJavaScript($this->_plugin.'.settings-confirm-delete-status');
 
             $content = View::make(

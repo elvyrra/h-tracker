@@ -1,107 +1,119 @@
-/* global app, ko, Lang */
-
 'use strict';
 
-require(['app'], function() {
-    var form = app.forms['ticket-settings-form'];
+require(['app', 'emv', 'lang'], function(app, EMV, Lang) {
+    const form = app.forms['ticket-settings-form'];
 
-    var StatusModel = function() {
-        this.options = ko.observableArray(JSON.parse(form.inputs.options.val()));
-
-        this.orderedOptions = ko.computed(function() {
-            return this.options().sort(function(a, b) {
-                return a.order - b.order;
+    /**
+     * This class manages the behavior of the settings form for the plugin h-tracker
+     */
+    class StatusModel extends EMV {
+        /**
+         * Constructor
+         */
+        constructor() {
+            super({
+                data : {
+                    options : JSON.parse(form.inputs.options.val())
+                },
+                computed : {
+                    orderedOptions : function() {
+                        return this.options.sort((a, b) => {
+                            return a.order - b.order;
+                        });
+                    },
+                    ids : function() {
+                        return this.options.map((item) => {
+                            return parseInt(item.id, 10);
+                        });
+                    },
+                    maxId : function() {
+                        return Math.max.apply(null, this.ids);
+                    },
+                    orders : function() {
+                        return this.options.map((item) => {
+                            return parseInt(item.order, 10);
+                        });
+                    },
+                    maxOrder : function() {
+                        return Math.max.apply(null, this.orders);
+                    }
+                }
             });
-        }.bind(this));
-
-        this.ids = ko.computed(function() {
-            return ko.utils.arrayMap(
-                this.options(),
-                function(item) {
-                    return parseInt(item.id);
-                }
-            );
-        }.bind(this));
-
-        this.maxId = ko.computed(function() {
-            return Math.max.apply(null, this.ids());
-        }.bind(this));
-
-        this.orders = ko.computed(function() {
-            return ko.utils.arrayMap(
-                this.options(),
-                function(item) {
-                    return parseInt(item.order);
-                }
-            );
-        }.bind(this));
-
-        this.maxOrder = ko.computed(function() {
-            return Math.max.apply(null, this.orders());
-        }.bind(this));
-    };
-
-    StatusModel.prototype.add = function() {
-        this.options.push({
-            id : this.maxId() + 1,
-            order : this.maxOrder() + 1,
-            label : ''
-        });
-    };
-
-    StatusModel.prototype.up = function(item) {
-        // Change the order with the last upper item
-        var upperItems = this.orderedOptions().filter(function(a) {
-            return a.order < item.order;
-        });
-
-        var upItem = upperItems[upperItems.length - 1];
-
-        if(upItem) {
-            var tmp = upItem.order;
-
-            upItem.order = item.order;
-            item.order = tmp;
-
-            this.rebuild();
         }
-    };
 
-    StatusModel.prototype.down = function(item) {
-        // Change the order with the last upper item
-        var lowerItems = this.orderedOptions().filter(function(a) {
-            return a.order > item.order;
-        });
-
-        var downItem = lowerItems[0];
-
-        if(downItem) {
-            var tmp = downItem.order;
-
-            downItem.order = item.order;
-            item.order = tmp;
-
-            this.rebuild();
+        /**
+         * Add an option
+         */
+        add() {
+            this.options.push({
+                id : this.maxId + 1,
+                order : this.maxOrder + 1,
+                label : ''
+            });
         }
-    };
 
-    StatusModel.prototype.setLabel = function(item, event) {
-        item.label = event.target.value;
+        /**
+         * Change the order of the item with the last upper item
+         * @param   {Object} item The item to up
+         */
+        up(item) {
+            var upperItems = this.orderedOptions.filter((a) => {
+                return a.order < item.order;
+            });
 
-        this.rebuild();
-    };
+            var upItem = upperItems[upperItems.length - 1];
 
-    StatusModel.prototype.remove = function(item) {
-        if(confirm(Lang.get('h-tracker.settings-confirm-delete-status'))) {
-            this.options.splice(this.options().indexOf(item), 1);
+            if(upItem) {
+                var tmp = upItem.order;
+
+                upItem.order = item.order;
+                item.order = tmp;
+            }
         }
-    };
 
-    StatusModel.prototype.rebuild = function() {
-        this.options.valueHasMutated();
-    };
+        /**
+         * Change the order of the item with the first lower item
+         * @param   {Object} item The item to down
+         */
+        down(item) {
+            var lowerItems = this.orderedOptions.filter((a) => {
+                return a.order > item.order;
+            });
+
+            var downItem = lowerItems[0];
+
+            if(downItem) {
+                var tmp = downItem.order;
+
+                downItem.order = item.order;
+                item.order = tmp;
+            }
+        }
+
+        /**
+         * Set the label of an item
+         * @param {Object} item  The item to set its label
+         * @param {Event}  event The initial event that triggered this method
+         */
+        setLabel(item, event) {
+            item.label = event.target.value;
+        }
+
+        /**
+         * Remove an item
+         * @param   {Object} item The item to remove
+         */
+        remove(item) {
+            if(confirm(Lang.get('h-tracker.settings-confirm-delete-status'))) {
+                const index = this.options.index(item);
+
+                this.options.splice(index, 1);
+            }
+        }
+    }
+
 
     var status = new StatusModel();
 
-    ko.applyBindings(status, form.node.get(0));
+    status.$apply(form.node.get(0));
 });

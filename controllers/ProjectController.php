@@ -105,8 +105,7 @@ class ProjectController extends Controller{
                     new WysiwygInput(array(
                         'name' => 'description',
                         'label' => Lang::get($this->_plugin . '.project-form-description-label'),
-                        'labelWidth' => 'auto',
-                        'attributes' => array('ko-wysiwyg' => '1'),
+                        'labelWidth' => 'auto'
                     )),
 
                     new HiddenInput(array(
