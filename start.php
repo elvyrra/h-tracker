@@ -14,7 +14,7 @@ App::router()->prefix('/htracker', function () {
         // Comments
         App::router()->get('htracker-history', '/tickets/{ticketId}/history', array('where' => array('ticketId' => '\d+'), 'action' => 'TicketController.history'));
 
-        App::router()->any('htracker-editComment', '/tickets//{ticketId}/comment/{commentId}', array('where' => array('commentId' => '\d+', 'ticketId' => '\d+'), 'action' => 'TicketController.editComment'));
+        App::router()->post('htracker-editComment', '/tickets//{ticketId}/comment/{commentId}', array('where' => array('commentId' => '\d+', 'ticketId' => '\d+'), 'action' => 'TicketController.editComment'));
 
         /*
          * Projects

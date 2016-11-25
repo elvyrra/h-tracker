@@ -17,7 +17,7 @@ ticket-list-priority-label = "Priorité"
 
 ; TASK FORM
 ticket-new-form-title = "Nouvelle tâche"
-ticket-form-title = "Tâche n° #{id}"
+ticket-form-title = "Tâche n° #{id} : {title}"
 ticket-form-project-label = "Projet"
 ticket-form-title-label = "Titre"
 ticket-form-description-label = "Description"
@@ -41,10 +41,8 @@ ticket-priority-6 = "Non urgente"
 ticket-priority-7 = "Reporté"
 
 ; TASKS COMMENTS LIST
-new-comment-btn = "Ajouter un commentaire"
-ticket-history-description-label = "Message"
-ticket-history-author-label = "Auteur"
-ticket-history-ctime-label = "Créé le"
+history-title = "Commentaires"
+comment-meta-title = "Par {author} {ago}"
 status-change-comment = "Le statut est passé de '{oldValue}' en '{newValue}'"
 title-change-comment = "Le titre de la tâche a été modifié"
 description-change-comment = "La description de la tâche a été modifiée"
@@ -52,7 +50,7 @@ deadLine-change-comment = "La date buttoire est passée de '{oldValue}' en '{new
 target-change-comment = "La personne en charge est passée de '{oldValue}' en '{newValue}'"
 
 ; TASK COMMENT FORM
-ticket-comment-form-title = "Ajouter un commentaire à la tâche"
+comment-form-title = "Laisser un commentaire"
 
 
 ; PROJECTS LIST

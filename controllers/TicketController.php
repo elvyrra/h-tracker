@@ -174,24 +174,21 @@ class TicketController extends Controller {
             'id' => 'htracker-ticket-form',
             'model' => 'Ticket',
             'reference' => array('id' => $this->ticketId),
+            'columns' => 2,
             'fieldsets' => array(
                 'general' => array(
-                    new SelectInput(array(
-                        'name' => 'projectId',
-                        'options' => $projects,
-                        'label' => Lang::get($this->_plugin . '.ticket-form-project-label'),
-                    )),
-
                     new TextInput(array(
                         'name'     => 'title',
                         'required' => true,
                         'label'    => Lang::get($this->_plugin . '.ticket-form-title-label'),
                     )),
 
-                    new WysiwygInput(array(
-                        'name'  => 'description',
-                        'label' => Lang::get($this->_plugin . '.ticket-form-description-label'),
+                    new SelectInput(array(
+                        'name' => 'projectId',
+                        'options' => $projects,
+                        'label' => Lang::get($this->_plugin . '.ticket-form-project-label'),
                     )),
+
 
                     new SelectInput(array(
                         'name'    => 'priority',
@@ -235,6 +232,18 @@ class TicketController extends Controller {
                     )),
                 ),
 
+                'description' => array(
+                    'legend' => Lang::get($this->_plugin . '.ticket-form-description-label'),
+                    Plugin::get('h-widgets') ?
+                        new \Hawk\Plugins\HWidgets\MarkdownInput(array(
+                            'name'  => 'description',
+                            'rows' => 5
+                        )) :
+                        new WysiwygInput(array(
+                            'name'  => 'description'
+                        ))
+                ),
+
                 'submits' => array(
                     new SubmitInput(array(
                         'name'  => 'valid',
@@ -270,7 +279,7 @@ class TicketController extends Controller {
             return NoSidebarTab::make(array(
                 'page'  => $display,
                 'title' => $this->ticketId ?
-                    Lang::get($this->_plugin . '.ticket-form-title',array('id' => $this->ticketId)) :
+                    Lang::get($this->_plugin . '.ticket-form-title', array('id' => $this->ticketId, 'title' => $form->getData('title'))) :
                     Lang::get($this->_plugin.'.ticket-new-form-title'),
                 'icon'  => 'book',
             ));
@@ -347,47 +356,36 @@ class TicketController extends Controller {
      * Display the list of comments for a ticket
      */
     public function history() {
-        $paramList = array(
-            'id' => 'htracker-ticket-history',
-            'model' => 'TicketComment',
-            'action' => App::router()->getUri('htracker-history', array('ticketId' => $this->ticketId)),
-            'filter' => new DBExample(array(
+        $comments = TicketComment::getListByExample(new DBExample(array(
+            'ticketId' => $this->ticketId
+        )));
+
+        $parser = new Parsedown();
+
+        foreach($comments as &$comment) {
+            $comment->meta = Lang::get($this->_plugin . '.comment-meta-title', array(
+                'author' => User::getById($comment->author)->username,
+                'ago' => Utils::timeAgo($comment->ctime)
+            ));
+
+            $comment->description = $parser->text($comment->description);
+        }
+
+        $id = 'h-tracker-comments-' . uniqid();
+
+        $this->addCss($this->getPlugin()->getCssUrl('htracker.less'));
+
+        return View::make($this->getPlugin()->getView('ticket-comments.tpl'), array(
+            'comments' => $comments,
+            'id' => $id,
+            'action' => App::router()->getUri('htracker-editComment', array(
                 'ticketId' => $this->ticketId,
+                'commentId' => 0
             )),
-            'controls' => $this->ticketId ? array(
-                array(
-                    'icon'   => 'plus',
-                    'label'  => Lang::get($this->_plugin . '.new-comment-btn'),
-                    'class'  => 'btn-success',
-                    'href'   => App::router()->getUri('htracker-editComment', array('ticketId' => $this->ticketId, 'commentId' => 0)),
-                    'target' => 'dialog',
-                )) :
-                array(),
-            'fields' => array(
-                'description' => array(
-                    'label' => Lang::get($this->_plugin . '.ticket-history-description-label'),
-                ),
-
-                'author' => array(
-                    'label' => Lang::get($this->_plugin . '.ticket-history-author-label'),
-                    'display' => function ($value, $field, $ticket) {
-                        return User::getById($value)->username;
-                    },
-                ),
-
-                'ctime' => array(
-                    'label' => Lang::get($this->_plugin . '.ticket-history-ctime-label'),
-                    'display' => function ($value) {
-                        return date(Lang::get('main.time-format'), $value);
-                    },
-                    'search'  => false,
-                ),
-            ),
-        );
-
-        $list = new ItemList($paramList);
-
-        return $list->display();
+            'onsuccess' => '$("#' . $id . '").load(app.getUri("htracker-history", {
+                ticketId : ' . $this->ticketId . '
+            }))'
+        ));
     }
 
 
@@ -395,60 +393,16 @@ class TicketController extends Controller {
      * Edit a ticket comment
      */
     public function editComment() {
-        $param = array(
-            'id' => 'ticket-form-comment',
-            'model' => 'TicketComment',
-            'reference' => array('id' => $this->commentId),
-            'fieldsets' => array(
-                'general' => array(
-                    new WysiwygInput(array(
-                        'name' => 'description'
-                    )),
+        App::response()->setContentType('json');
 
-                    new HiddenInput(array(
-                        'name'  => 'ticketId',
-                        'value' => $this->ticketId,
-                    )),
+        TicketComment::add(array(
+            'author' => App::session()->getUser()->id,
+            'ticketId' => $this->ticketId,
+            'ctime' => time(),
+            'description' => App::request()->getBody('content')
+        ));
 
-                    new HiddenInput(array(
-                        'name'  => 'author',
-                        'value' => App::session()->getUser()->id,
-                    )),
-
-                    new HiddenInput(array(
-                        'name'    => 'ctime',
-                        'default' => time(),
-                    )),
-                ),
-
-                'submits' => array(
-                    new SubmitInput(array(
-                        'name'  => 'valid',
-                        'value' => Lang::get('main.valid-button'),
-                    )),
-
-                    new ButtonInput(array(
-                        'name'    => 'cancel',
-                        'value'   => Lang::get('main.cancel-button'),
-                        'onclick' => 'app.dialog("close")',
-                    )),
-                ),
-            ),
-
-            'onsuccess' => 'app.dialog("close"); app.lists["htracker-ticket-history"].refresh();',
-        );
-
-        $form = new Form($param);
-
-        if(!$form->submitted()) {
-            return Dialogbox::make(array(
-                'page'  => $form,
-                'title' => Lang::get($this->_plugin . '.ticket-comment-form-title'),
-            ));
-        }
-        else {
-            return $form->treat();
-        }
+        return array();
     }
 
 

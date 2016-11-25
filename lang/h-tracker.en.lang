@@ -17,7 +17,7 @@ ticket-list-priority-label = "Priority"
 
 ; TICKET FORM
 ticket-new-form-title = "New task"
-ticket-form-title = "Task n° #{id}"
+ticket-form-title = "Task n° #{id} : {title}"
 ticket-form-project-label = "Project"
 ticket-form-title-label = "Title"
 ticket-form-description-label = "Description"
@@ -41,10 +41,8 @@ ticket-priority-6 = "Non urgent"
 ticket-priority-7 = "Postponed"
 
 ; TICKET COMMENTS LIST
-new-comment-btn = "Add a comment"
-ticket-history-description-label = "Message"
-ticket-history-author-label = "Author"
-ticket-history-ctime-label = "Created on"
+history-title = "Comments"
+comment-meta-title = "By {author} {ago}"
 status-change-comment = "The status changed from '{oldValue}' to '{newValue}'"
 title-change-comment = "The task title changed"
 description-change-comment = "the task description changed"
@@ -52,7 +50,7 @@ deadLine-change-comment = "The deadline changed from '{oldValue}' to '{newValue}
 target-change-comment = "The assigned person changed from '{oldValue}' to '{newValue}'"
 
 ; TICKET COMMENT FORM
-ticket-comment-form-title = "Add a comment to the task"
+comment-form-title = "Leave a comment"
 
 
 ; PROJECTS LIST
