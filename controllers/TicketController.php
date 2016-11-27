@@ -8,8 +8,7 @@ class TicketController extends Controller {
     /**
      * Entry point for the page of tickets
      */
-    public function index()
-    {
+    public function index() {
         // Get list of all subject
         $projects = $this->getProjectsOptions();
         $users = $this->getUsersOptions();
@@ -272,7 +271,7 @@ class TicketController extends Controller {
             $display = View::make(
                 Plugin::current()->getView("ticket-form.tpl"), array(
                     'form' => $form,
-                    'history' => $this->history()
+                    'history' => $this->ticketId ? $this->history() : ''
                 )
             );
 
@@ -328,7 +327,6 @@ class TicketController extends Controller {
                         $comments[] = Lang::get(
                             $this->_plugin . '.target-change-comment',
                             array(
-                                'oldValue' => empty($users[$oldValue]) ? '-' : $users[$oldValue],
                                 'newValue' => empty($users[$newValue]) ? '-' : $users[$newValue]
                             )
                         );
@@ -345,6 +343,47 @@ class TicketController extends Controller {
                 }
 
                 $form->register(Form::NO_EXIT);
+
+                // Send an email to notify the creation / modification of the task
+                $project = Project::getById($form->object->projectId);
+                $author = App::session()->getUser()->username;
+
+                if($form->new) {
+                    $subject = Lang::get($this->_plugin . '.notif-new-task', array(
+                        'project' => $project->name
+                    ));
+                    $content = View::make($this->getPlugin()->getView('notifications/new-task.tpl'), array(
+                        'author' => $author,
+                        'project' => $project->name,
+                        'title' => $form->object->title,
+                        'ticketId' => $this->ticketId
+                    ));
+                }
+                else {
+                    $subject = Lang::get($this->_plugin . '.notif-task-update', array(
+                        'project' => $project->name,
+                        'id' => $this->ticketId,
+                        'author' => $author
+                    ));
+
+                    $content = View::make($this->getPlugin()->getView('notifications/task-modification.tpl'), array(
+                        'author' => $author,
+                        'title' => $form->object->title,
+                        'ticketId' => $this->ticketId
+                    ));
+                }
+
+                $recipients = array_filter(User::getAll('id'), function($user) {
+                    return $user->isAllowed($this->_plugin . '.manage-ticket');
+                });
+
+                foreach($recipients as $recipient) {
+                    $email = new Mail();
+                    $email  ->subject($subject)
+                            ->content($content)
+                            ->to($recipient->email)
+                            ->send();
+                }
 
                 return $form->response(Form::STATUS_SUCCESS);
             }
@@ -395,12 +434,41 @@ class TicketController extends Controller {
     public function editComment() {
         App::response()->setContentType('json');
 
-        TicketComment::add(array(
+        $comment = TicketComment::add(array(
             'author' => App::session()->getUser()->id,
             'ticketId' => $this->ticketId,
             'ctime' => time(),
             'description' => App::request()->getBody('content')
         ));
+
+        // Send a notification of the new comment on the task
+        $ticket = Ticket::getById($this->ticketId);
+        $project = Project::getById($ticket->projectId);
+        $author = App::session()->getUser()->username;
+
+        $subject = Lang::get($this->_plugin . '.notif-new-comment', array(
+            'project' => $project->name,
+            'author' => $author,
+            'id' => $ticket->id
+        ));
+        $content = View::make($this->getPlugin()->getView('notifications/new-comment.tpl'), array(
+            'author' => $author,
+            'ticketId' => $ticket->id,
+            'comment' => $comment->description,
+            'title' => $ticket->title,
+        ));
+
+        $recipients = array_filter(User::getAll('id'), function($user) {
+            return $user->isAllowed($this->_plugin . '.manage-ticket');
+        });
+
+        foreach($recipients as $recipient) {
+            $email = new Mail();
+            $email  ->subject($subject)
+                    ->content($content)
+                    ->to($recipient->email)
+                    ->send();
+        }
 
         return array();
     }
@@ -412,11 +480,15 @@ class TicketController extends Controller {
      * @return array
      */
     private function getUsersOptions() {
+        $users = array_filter(User::getAll('id'), function($user) {
+            return $user->isAllowed($this->_plugin . '.manage-ticket');
+        });
+
         return array_map(
             function ($a) {
                 return $a->username;
             },
-            User::getAll('id')
+            $users
         );
 
     }

@@ -47,7 +47,7 @@ status-change-comment = "The status changed from '{oldValue}' to '{newValue}'"
 title-change-comment = "The task title changed"
 description-change-comment = "the task description changed"
 deadLine-change-comment = "The deadline changed from '{oldValue}' to '{newValue}'"
-target-change-comment = "The assigned person changed from '{oldValue}' to '{newValue}'"
+target-change-comment = "The task has been assigned to '{newValue}'"
 
 ; TICKET COMMENT FORM
 comment-form-title = "Leave a comment"
@@ -70,10 +70,15 @@ project-form-author-label = "Author"
 
 
 ; PERMISSIONS
-permission-name-manage-ticket = "Manage the tasks"
+permission-name-manage-ticket = "Manage the projects and tasks"
 
 ; SETTINGS
 settings-status-legend = "Task status"
 settings-status-intro = "Here you can manage the different status a task can be applied for your activity, and order them."
 settings-add-status-btn = "Add"
 settings-confirm-delete-status = "do you really want to delete this status ? If you do, all the tasks with this status won't have status anymore"
+
+; NOTIFICATIONS
+notif-new-task = "[H-Tracker][{project}] : A new task has been created"
+notif-task-update = "[H-Tracker][{project}] : The task #{id} has been modified by {author}"
+notif-new-comment = "[H-Tracker][{project}] : New comment from {author} on the task #{id}"

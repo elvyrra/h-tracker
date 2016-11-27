@@ -2,6 +2,8 @@
 
 namespace Hawk\Plugins\HTracker;
 
+use\Hawk\Plugins\HWidgets as HWidgets;
+
 class ProjectController extends Controller{
 
     /**
@@ -102,7 +104,7 @@ class ProjectController extends Controller{
                         'label' => Lang::get($this->_plugin . '.project-form-name-label'),
                     )),
 
-                    new WysiwygInput(array(
+                    new HWidgets\MarkdownInput(array(
                         'name' => 'description',
                         'label' => Lang::get($this->_plugin . '.project-form-description-label'),
                         'labelWidth' => 'auto'

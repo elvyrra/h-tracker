@@ -3,7 +3,7 @@
 namespace Hawk\Plugins\HTracker;
 
 App::router()->prefix('/htracker', function () {
-    App::router()->auth( App::session()->isAllowed('ticket.manage-ticket'), function () {
+    App::router()->auth( App::session()->isAllowed('h-tracker.manage-ticket'), function () {
         /*
          * Tickets
          */
