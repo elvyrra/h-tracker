@@ -2,4 +2,4 @@
 
 <div>{{ $comment }}</div>
 
-See the task : <a href="{{ ROOT_URL }}{uri action='htracker-editTicket' ticketId='{$ticketId}'}">{{ $title }}</a>
+See the task : <a href="{{ ROOT_URL }}#!{uri action='htracker-editTicket' ticketId='{$ticketId}'}">{{ $title }}</a>
