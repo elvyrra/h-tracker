@@ -356,7 +356,7 @@ class TicketController extends Controller {
                         'author' => $author,
                         'project' => $project->name,
                         'title' => $form->object->title,
-                        'ticketId' => $this->ticketId
+                        'ticketId' => $form->object->id
                     ));
                 }
                 else {
