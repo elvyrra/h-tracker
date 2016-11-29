@@ -35,6 +35,9 @@ class TicketFilterWidget extends Widget {
 
         $form = new Form(array(
             'id' => 'ticket-filter-form',
+            'attributes' => array(
+                'e-on'  => '{change : setFilter}'
+            ),
             'fieldsets' => array(
                 'form' => array_map(
                     function ($status) use ($filters) {

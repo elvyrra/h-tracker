@@ -1,15 +1,25 @@
-/* global app */
-
 'use strict';
 
-require(['app'], function() {
-    app.forms['ticket-filter-form'].onchange = function() {
-        app.lists['htracker-ticket-list'].refresh(
-            {
-                headers : {
-                    'X-List-Filter' : this.toString()
+require(['app', 'emv'], (app, EMV) => {
+    /**
+     * This controller manages the form that filters the tasks
+     */
+    class FilterForm extends EMV {
+        /**
+         * Change the list filters
+         */
+        setFilter() {
+            app.lists['htracker-ticket-list'].refresh(
+                {
+                    headers : {
+                        'X-List-Filter' : app.forms['ticket-filter-form'].toString()
+                    }
                 }
-            }
-        );
-    };
+            );
+        }
+    }
+
+    const filterForm = new FilterForm();
+
+    filterForm.$apply(document.getElementById('ticket-filter-form'));
 });

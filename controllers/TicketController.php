@@ -78,7 +78,7 @@ class TicketController extends Controller {
 
                 'target' => array(
                     'label'   => Lang::get($this->_plugin . '.ticket-list-target-label'),
-                    'display' => function ($value, $field, $ticket) {
+                    'display' => function ($value, $field, $ticket) use ($users) {
                         if(empty($value)) {
                             return '';
                         }
@@ -113,8 +113,20 @@ class TicketController extends Controller {
                 'status' => array(
                     'label' => Lang::get($this->_plugin . '.ticket-list-status-label'),
                     'search' => false,
-                    'display' => function ($value) use ($status) {
+                    'display' => function ($value, $field, $ticket) use ($status) {
                         return isset($status[$value]) ? $status[$value] : '';
+
+                        // $select = new SelectInput(array(
+                        //     'options' => $status,
+                        //     'invitation' => ' - ',
+                        //     'class' => 'task-status',
+                        //     'value' => $value,
+                        //     'attributes' => array(
+                        //         'data-taskid' => $ticket->id
+                        //     )
+                        // ));
+
+                        // return $select->display();
                     },
                 ),
 
@@ -150,11 +162,11 @@ class TicketController extends Controller {
                 ),
                 'title' => Lang::get($this->_plugin.'.ticket-list-title'),
                 'icon' => $this->getPlugin()->getFaviconUrl(),
+                'tabId' => 'htracker-tasks-index'
             ));
         }
-        else {
-            return $list->display();
-        }
+
+        return $list->display();
     }
 
 
@@ -162,8 +174,7 @@ class TicketController extends Controller {
     /**
      * Edit a ticket
      */
-    public function edit(){
-
+    public function edit() {
         // Options select
         $projects = $this->getProjectsOptions();
         $users = $this->getUsersOptions();
@@ -359,7 +370,7 @@ class TicketController extends Controller {
                         'ticketId' => $form->object->id
                     ));
                 }
-                else {
+                elseif(!empty($comments)) {
                     $subject = Lang::get($this->_plugin . '.notif-task-update', array(
                         'project' => $project->name,
                         'id' => $this->ticketId,
