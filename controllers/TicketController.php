@@ -385,7 +385,8 @@ class TicketController extends Controller {
                 }
 
                 $recipients = array_filter(User::getAll('id'), function($user) {
-                    return $user->isAllowed($this->_plugin . '.manage-ticket');
+                    return  $user->isAllowed($this->_plugin . '.manage-ticket') &&
+                            $user->id !== App::session()->getUser()->id;
                 });
 
                 foreach($recipients as $recipient) {

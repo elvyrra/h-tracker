@@ -16,11 +16,6 @@ require(['app', 'emv', 'lang'], function(app, EMV, Lang) {
                     options : JSON.parse(form.inputs.options.val())
                 },
                 computed : {
-                    orderedOptions : function() {
-                        return this.options.sort((a, b) => {
-                            return a.order - b.order;
-                        });
-                    },
                     ids : function() {
                         return this.options.map((item) => {
                             return parseInt(item.id, 10);
@@ -57,7 +52,7 @@ require(['app', 'emv', 'lang'], function(app, EMV, Lang) {
          * @param   {Object} item The item to up
          */
         up(item) {
-            var upperItems = this.orderedOptions.filter((a) => {
+            var upperItems = this.options.filter((a) => {
                 return a.order < item.order;
             });
 
@@ -76,7 +71,7 @@ require(['app', 'emv', 'lang'], function(app, EMV, Lang) {
          * @param   {Object} item The item to down
          */
         down(item) {
-            var lowerItems = this.orderedOptions.filter((a) => {
+            var lowerItems = this.options.filter((a) => {
                 return a.order > item.order;
             });
 
@@ -105,7 +100,7 @@ require(['app', 'emv', 'lang'], function(app, EMV, Lang) {
          */
         remove(item) {
             if(confirm(Lang.get('h-tracker.settings-confirm-delete-status'))) {
-                const index = this.options.index(item);
+                const index = this.options.indexOf(item);
 
                 this.options.splice(index, 1);
             }

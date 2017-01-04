@@ -5,7 +5,7 @@
 {{ $form->inputs['options'] }}
 
 <div class="form-group">
-    <div class="input-group status-line" e-each="orderedOptions">
+    <div class="input-group status-line" e-each="{$data : options, $sort : 'order'}">
         <div class="input-group-addon status-position">
             <div class="icon icon-chevron-up pointer status-up" e-click="$root.up.bind($root)"></div>
             <div class="icon icon-chevron-down pointer status-down" e-click="$root.down.bind($root)"></div>
