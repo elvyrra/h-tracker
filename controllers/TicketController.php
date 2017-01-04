@@ -358,6 +358,7 @@ class TicketController extends Controller {
                 // Send an email to notify the creation / modification of the task
                 $project = Project::getById($form->object->projectId);
                 $author = App::session()->getUser()->username;
+                $sendEmail = false;
 
                 if($form->new) {
                     $subject = Lang::get($this->_plugin . '.notif-new-task', array(
@@ -369,6 +370,7 @@ class TicketController extends Controller {
                         'title' => $form->object->title,
                         'ticketId' => $form->object->id
                     ));
+                    $sendEmail = true;
                 }
                 elseif(!empty($comments)) {
                     $subject = Lang::get($this->_plugin . '.notif-task-update', array(
@@ -382,19 +384,22 @@ class TicketController extends Controller {
                         'title' => $form->object->title,
                         'ticketId' => $this->ticketId
                     ));
+                    $sendEmail = true;
                 }
 
-                $recipients = array_filter(User::getAll('id'), function($user) {
-                    return  $user->isAllowed($this->_plugin . '.manage-ticket') &&
-                            $user->id !== App::session()->getUser()->id;
-                });
+                if($sendEmail) {
+                    $recipients = array_filter(User::getAll('id'), function($user) {
+                        return  $user->isAllowed($this->_plugin . '.manage-ticket') &&
+                                $user->id !== App::session()->getUser()->id;
+                    });
 
-                foreach($recipients as $recipient) {
-                    $email = new Mail();
-                    $email  ->subject($subject)
-                            ->content($content)
-                            ->to($recipient->email)
-                            ->send();
+                    foreach($recipients as $recipient) {
+                        $email = new Mail();
+                        $email  ->subject($subject)
+                                ->content($content)
+                                ->to($recipient->email)
+                                ->send();
+                    }
                 }
 
                 return $form->response(Form::STATUS_SUCCESS);
