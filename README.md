@@ -51,6 +51,9 @@ This plugin is devloped by the company Elvyrra
 
 # Changeset
 
+## v1.7.0.1
+* Fix: remove invitation on status selectbox in the tasks list
+
 ## v1.7.0
 * Unable to remove the two first status (open and closed)
 * Add a color code to display the over delayed tasks

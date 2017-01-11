@@ -125,7 +125,6 @@ class TicketController extends Controller {
 
                         $select = new SelectInput(array(
                             'options' => $status,
-                            'invitation' => ' - ',
                             'class' => 'task-status',
                             'value' => $value,
                             'attributes' => array(
