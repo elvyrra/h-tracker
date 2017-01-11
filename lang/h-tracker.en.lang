@@ -13,7 +13,9 @@ ticket-list-project-label = "Project"
 ticket-list-status-label = "Status"
 ticket-list-target-label = "Assinged to"
 ticket-list-deadline-label = "Deadline"
+ticket-list-over-delayed-title = "This task should have been closed before {date}"
 ticket-list-priority-label = "Priority"
+update-ticket-status-success = "The status of the task has been successfully updated"
 
 ; TICKET FORM
 ticket-new-form-title = "New task"
@@ -26,6 +28,7 @@ ticket-form-author-label = "Author"
 ticket-form-status-label = "Status"
 ticket-form-target-label = "Assigned to"
 ticket-form-dead-line-label = "To be done on"
+
 
 ; TICKETS FILTER
 ticket-filter-title = "Filter by status"

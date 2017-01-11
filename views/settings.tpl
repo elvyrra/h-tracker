@@ -13,7 +13,7 @@
 
         <input type="text" e-value="label" class="status-label form-control"/>
 
-        <div class="input-group-addon pointer" e-click="$root.remove.bind($root)" >
+        <div class="input-group-addon pointer" e-click="$root.remove.bind($root)" e-show="$root.fixedIds.indexOf(id) === -1">
             <i class="icon icon-trash text-danger" class="status-remove"></i>
         </div>
     </div>

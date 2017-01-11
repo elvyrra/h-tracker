@@ -46,11 +46,18 @@ class TicketController extends Controller {
                     'target' => 'dialog',
                 ),
             ),
+            'lineClass' => function($line) {
+                if($line->isLate()) {
+                    return 'text-danger';
+                }
+
+                return '';
+            },
             'fields' => array(
                 'id' => array(
                     'label' => Lang::get($this->_plugin.'.ticket-list-id-label'),
-                    'display' => function ($value) {
-                        return '#'.$value;
+                    'display' => function ($value, $field, $line) {
+                        return '#' . $value;
                     },
                     'href' => function ($value, $field, $ticket) {
                         return App::router()->getUri('htracker-editTicket', array('ticketId' => $ticket->id));
@@ -61,7 +68,7 @@ class TicketController extends Controller {
                     'label' => Lang::get($this->_plugin . '.ticket-list-title-label'),
                     'href'  => function ($value, $field, $ticket) {
                         return App::router()->getUri('htracker-editTicket', array('ticketId' => $ticket->id));
-                    },
+                    }
                 ),
 
                 'projectId' => array(
@@ -114,26 +121,39 @@ class TicketController extends Controller {
                     'label' => Lang::get($this->_plugin . '.ticket-list-status-label'),
                     'search' => false,
                     'display' => function ($value, $field, $ticket) use ($status) {
-                        return isset($status[$value]) ? $status[$value] : '';
+                        // return isset($status[$value]) ? $status[$value] : '';
 
-                        // $select = new SelectInput(array(
-                        //     'options' => $status,
-                        //     'invitation' => ' - ',
-                        //     'class' => 'task-status',
-                        //     'value' => $value,
-                        //     'attributes' => array(
-                        //         'data-taskid' => $ticket->id
-                        //     )
-                        // ));
+                        $select = new SelectInput(array(
+                            'options' => $status,
+                            'invitation' => ' - ',
+                            'class' => 'task-status',
+                            'value' => $value,
+                            'attributes' => array(
+                                'data-task-id' => $ticket->id
+                            )
+                        ));
 
-                        // return $select->display();
+                        return $select->display();
                     },
                 ),
 
                 'deadLine' => array(
                     'label'   => Lang::get($this->_plugin . '.ticket-list-deadline-label'),
-                    'display' => function ($value, $field) {
-                        return date(Lang::get('main.date-format'), strtotime($value));
+                    'display' => function ($value, $field, $line) {
+                        $date = date(Lang::get('main.date-format'), strtotime($value));
+                        $result = $date;
+
+                        if($line->isLate()) {
+                            $result .= Icon::make(array(
+                                'icon' => 'clock-o',
+                                'class' => 'pull-right',
+                                'title' => Lang::get($this->_plugin . '.ticket-list-over-delayed-title', array(
+                                    'date' => $date
+                                ))
+                            ));
+                        }
+
+                        return $result;
                     },
                     'search'  => array(
                         'type' => 'date'
@@ -295,115 +315,7 @@ class TicketController extends Controller {
             ));
         }
         else{
-            if($form->submitted() === "delete") {
-                return $form->delete();
-            }
-            else if($form->check()) {
-                $oldValues = Ticket::getById($this->ticketId);
-
-                if($oldValues) {
-                    $comments = array();
-                    foreach(array('title', 'description') as $key){
-                        if($oldValues->$key !== $form->getData($key)) {
-                            // $form->fields['status']->dbvalue()
-                            $comments[] = Lang::get($this->_plugin . '.'.$key.'-change-comment', array('oldValue' => $oldValues->$key, 'newValue' => $form->getData($key)));
-                        }
-                    }
-
-                    if($oldValues->deadLine !== $form->inputs['deadLine']->dbvalue()) {
-                        $comments[] = Lang::get(
-                            $this->_plugin . '.deadLine-change-comment',
-                            array(
-                                'oldValue' => date(Lang::get('main.date-format'), strtotime($oldValues->deadLine)),
-                                'newValue' => date(Lang::get('main.date-format'), strtotime($form->inputs['deadLine']->dbvalue())),
-                            )
-                        );
-                    }
-
-                    if($oldValues->status !== $form->getData('status')) {
-                        $oldValue   = $oldValues->status;
-                        $newValue   = $form->getData('status');
-                        $comments[] = Lang::get(
-                            $this->_plugin . '.status-change-comment',
-                            array(
-                                'oldValue' => $status[$oldValue],
-                                'newValue' => $status[$newValue]
-                            )
-                        );
-                    }
-
-                    if($oldValues->target !== $form->getData('target')) {
-                        $oldValue   = $oldValues->target;
-                        $newValue   = $form->getData('target');
-                        $comments[] = Lang::get(
-                            $this->_plugin . '.target-change-comment',
-                            array(
-                                'newValue' => empty($users[$newValue]) ? '-' : $users[$newValue]
-                            )
-                        );
-                    }
-
-                    if(!empty($comments)) {
-                        TicketComment::add(array(
-                            'author' => App::session()->getUser()->id,
-                            'ticketId' => $this->ticketId,
-                            'ctime' => time(),
-                            'description' => implode('<br />', $comments),
-                        ));
-                    }
-                }
-
-                $form->register(Form::NO_EXIT);
-
-                // Send an email to notify the creation / modification of the task
-                $project = Project::getById($form->object->projectId);
-                $author = App::session()->getUser()->username;
-                $sendEmail = false;
-
-                if($form->new) {
-                    $subject = Lang::get($this->_plugin . '.notif-new-task', array(
-                        'project' => $project->name
-                    ));
-                    $content = View::make($this->getPlugin()->getView('notifications/new-task.tpl'), array(
-                        'author' => $author,
-                        'project' => $project->name,
-                        'title' => $form->object->title,
-                        'ticketId' => $form->object->id
-                    ));
-                    $sendEmail = true;
-                }
-                elseif(!empty($comments)) {
-                    $subject = Lang::get($this->_plugin . '.notif-task-update', array(
-                        'project' => $project->name,
-                        'id' => $this->ticketId,
-                        'author' => $author
-                    ));
-
-                    $content = View::make($this->getPlugin()->getView('notifications/task-modification.tpl'), array(
-                        'author' => $author,
-                        'title' => $form->object->title,
-                        'ticketId' => $this->ticketId
-                    ));
-                    $sendEmail = true;
-                }
-
-                if($sendEmail) {
-                    $recipients = array_filter(User::getAll('id'), function($user) {
-                        return  $user->isAllowed($this->_plugin . '.manage-ticket') &&
-                                $user->id !== App::session()->getUser()->id;
-                    });
-
-                    foreach($recipients as $recipient) {
-                        $email = new Mail();
-                        $email  ->subject($subject)
-                                ->content($content)
-                                ->to($recipient->email)
-                                ->send();
-                    }
-                }
-
-                return $form->response(Form::STATUS_SUCCESS);
-            }
+            return $form->treat();
         }
     }
 
@@ -547,5 +459,22 @@ class TicketController extends Controller {
         }
 
         return $status;
+    }
+
+    /**
+     * Update the status of a task. This method is called from the tasks list
+     * @return array
+     */
+    public function updateStatus() {
+        $task = Ticket::getById($this->ticketId);
+
+        $task->status = App::request()->getBody('status');
+
+        $task->save();
+
+        App::response()->setContentType('json');
+        return array(
+            'message' => Lang::get($this->_plugin . '.update-ticket-status-success')
+        );
     }
 }

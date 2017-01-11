@@ -32,11 +32,11 @@ App::router()->prefix('/htracker', function () {
             'action' => 'TicketController.assign'
         ));
 
-        App::router()->post('htracker-ticket-status', '/tickets/{ticketId}/status', array(
+        App::router()->patch('htracker-ticket-status', '/tickets/{ticketId}/update-status', array(
             'where' => array(
                 'ticketId' => '\d+'
             ),
-            'action' => 'TicketController.status'
+            'action' => 'TicketController.updateStatus'
         ));
 
         // Comments

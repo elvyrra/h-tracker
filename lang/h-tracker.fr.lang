@@ -13,7 +13,9 @@ ticket-list-project-label = "Projet"
 ticket-list-status-label = "Status"
 ticket-list-target-label = "Assigné à"
 ticket-list-deadline-label = "Date limite"
+ticket-list-over-delayed-title = "Cette tâche aurait dû etre terminée avant le {date}"
 ticket-list-priority-label = "Priorité"
+update-ticket-status-success = "Le statut de la tâche a été mis à jour."
 
 ; TASK FORM
 ticket-new-form-title = "Nouvelle tâche"

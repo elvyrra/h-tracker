@@ -38,7 +38,6 @@ class Installer extends PluginInstaller {
                 )
             )
         );
-
     }
 
 

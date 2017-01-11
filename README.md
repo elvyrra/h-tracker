@@ -39,3 +39,19 @@ To add a status, click on the button "Add". The new empty status will be created
 and change it position in the list, with the arrows at the left of the status name.
 
 To remove an unused status, click on the trash button at the right of the status name.
+
+# Dependencies
+This plugin depends on the plugins :
+* <a href="http://hawk-app.fr/#!/store/plugins/h-widgets" target="_blank">H Widgets</a>
+
+# Author
+This plugin is devloped by the company Elvyrra
+
+©Elvyrra S.A.S
+
+# Changeset
+
+## v1.7.0
+* Unable to remove the two first status (open and closed)
+* Add a color code to display the over delayed tasks
+* Change the status of a task directly from the tasks list

@@ -130,6 +130,16 @@ class Ticket extends Model {
      */
     const PRIORITY_POSTPONED = 7;
 
+    /**
+     * id of the status 'new'
+     */
+    const STATUS_NEW_ID = 1;
+
+    /**
+     * Id of the status 'closed'
+     */
+    const STATUS_CLOSED_ID = 2;
+
 
     public static function getPrioritiesList() {
         $priorities = array(
@@ -149,6 +159,134 @@ class Ticket extends Model {
             },
             $priorities
         );
+    }
 
+    /**
+     * Check if the task is over delayed. A task is over delayed if it deadline is eralier today, and it status not set to
+     * 'closed'
+     * @returns boolean
+     */
+    public function isLate() {
+        return (int) $this->status !== self::STATUS_CLOSED_ID && date('Y-m-d') > $this->deadLine;
+    }
+
+
+    /**
+     * Save the ticket in the database
+     */
+    public function save() {
+        $plugin = Plugin::current();
+        $sendNotif = false;
+        $project = Project::getById($this->projectId);
+        $author = App::session()->getUser()->username;
+
+        if(empty($this->id)) {
+            parent::save();
+
+            // creating a new ticket
+            $sendNotif = true;
+            $subject = Lang::get($plugin->getName() . '.notif-new-task', array(
+                'project' => $project->name
+            ));
+            $content = View::make($plugin->getView('notifications/new-task.tpl'), array(
+                'author' => $author,
+                'project' => $project->name,
+                'title' => $this->title,
+                'ticketId' => $this->id
+            ));
+        }
+        else {
+            // Updating the ticket
+            $oldValues = Ticket::getByExample(new DBExample(array(
+                'id' =>$this->id
+            )));
+
+            if($oldValues) {
+                $comments = array();
+                foreach(array('title', 'description') as $key){
+                    if($oldValues->$key !== $this->$key) {
+                        $comments[] = Lang::get($plugin->getName() . '.'.$key.'-change-comment', array(
+                            'oldValue' => $oldValues->$key,
+                            'newValue' => $this->$key
+                        ));
+                    }
+                }
+
+                if($oldValues->deadLine !== $this->deadLine) {
+                    $comments[] = Lang::get(
+                        $plugin->getName() . '.deadLine-change-comment',
+                        array(
+                            'oldValue' => date(Lang::get('main.date-format'), strtotime($oldValues->deadLine)),
+                            'newValue' => date(Lang::get('main.date-format'), strtotime($this->deadLine)),
+                        )
+                    );
+                }
+
+                if($oldValues->status !== $this->status) {
+                    $statusList = array();
+                    foreach(json_decode(Option::get($plugin->getName() . '.status')) as $status) {
+                        $statusList[$status->id] = $status->label;
+                    }
+
+                    $comments[] = Lang::get(
+                        $plugin->getName() . '.status-change-comment',
+                        array(
+                            'oldValue' => $statusList[$oldValues->status],
+                            'newValue' => $statusList[$this->status]
+                        )
+                    );
+                }
+
+                if($oldValues->target !== $this->target) {
+                    $comments[] = Lang::get(
+                        $plugin->getName() . '.target-change-comment',
+                        array(
+                            'newValue' => empty($users[$this->target]) ? '-' : $users[$this->target]
+                        )
+                    );
+                }
+
+                if(!empty($comments)) {
+                    TicketComment::add(array(
+                        'author' => App::session()->getUser()->id,
+                        'ticketId' => $this->id,
+                        'ctime' => time(),
+                        'description' => implode('<br />', $comments),
+                    ));
+
+                    $sendNotif = true;
+                    $subject = Lang::get($plugin->getName() . '.notif-task-update', array(
+                        'project' => $project->name,
+                        'id' => $this->id,
+                        'author' => $author
+                    ));
+
+                    $content = View::make($plugin->getView('notifications/task-modification.tpl'), array(
+                        'author' => $author,
+                        'title' => $this->title,
+                        'ticketId' => $this->id
+                    ));
+                }
+            }
+
+            parent::save();
+        }
+
+        // Send the notification of new ticket / ticket modification
+        if($sendNotif) {
+            $recipients = array_filter(User::getAll('id'), function($user) use($plugin) {
+                return  $user->isAllowed($plugin->getName() . '.manage-ticket') &&
+                        // $user->id !== App::session()->getUser()->id;
+                    true;
+            });
+
+            foreach($recipients as $recipient) {
+                $email = new Mail();
+                $email  ->subject($subject)
+                        ->content($content)
+                        ->to($recipient->email)
+                        ->send();
+            }
+        }
     }
 }

@@ -13,7 +13,8 @@ require(['app', 'emv', 'lang'], function(app, EMV, Lang) {
         constructor() {
             super({
                 data : {
-                    options : JSON.parse(form.inputs.options.val())
+                    options : JSON.parse(form.inputs.options.val()),
+                    fixedIds : [1, 2]
                 },
                 computed : {
                     ids : function() {
@@ -106,7 +107,6 @@ require(['app', 'emv', 'lang'], function(app, EMV, Lang) {
             }
         }
     }
-
 
     var status = new StatusModel();
 
