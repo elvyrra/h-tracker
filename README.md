@@ -51,6 +51,9 @@ This plugin is devloped by the company Elvyrra
 
 # Changeset
 
+## v1.7.2
+* Fix: Display the list of status in the right order in the sidebar filter
+
 ## v1.7.0.1
 * Fix: remove invitation on status selectbox in the tasks list
 

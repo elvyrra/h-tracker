@@ -33,6 +33,11 @@ class TicketFilterWidget extends Widget {
     public function display() {
         $filters = $this->getFilters();
 
+        $statusList = json_decode(Option::get($this->_plugin . '.status'), true);
+        usort($statusList, function($status1, $status2) {
+            return $status1['order'] - $status2['order'];
+        });
+
         $form = new Form(array(
             'id' => 'ticket-filter-form',
             'attributes' => array(
@@ -51,7 +56,7 @@ class TicketFilterWidget extends Widget {
                             )
                         );
                     },
-                    json_decode(Option::get($this->_plugin . '.status'), true)
+                    $statusList
                 )
             )
         ));
