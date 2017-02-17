@@ -11,8 +11,8 @@ class TicketController extends Controller {
     public function index() {
         // Get list of all subject
         $projects = $this->getProjectsOptions();
-        $users = $this->getUsersOptions();
-        $status = $this->getStatusOptions();
+        $users = Ticket::getUsersOptions();
+        $status = Ticket::getStatusOptions();
 
         $filters = TicketFilterWidget::getInstance()->getFilters();
         $filter = null;
@@ -196,8 +196,8 @@ class TicketController extends Controller {
     public function edit() {
         // Options select
         $projects = $this->getProjectsOptions();
-        $users = $this->getUsersOptions();
-        $status = $this->getStatusOptions();
+        $users = Ticket::getUsersOptions();
+        $status = Ticket::getStatusOptions();
 
         $param = array(
             'id' => 'htracker-ticket-form',
@@ -403,26 +403,6 @@ class TicketController extends Controller {
 
 
     /**
-     * Get the possible users that can be ticket / comment author
-     *
-     * @return array
-     */
-    private function getUsersOptions() {
-        $users = array_filter(User::getAll('id'), function($user) {
-            return $user->isAllowed($this->_plugin . '.manage-ticket');
-        });
-
-        return array_map(
-            function ($a) {
-                return $a->username;
-            },
-            $users
-        );
-
-    }
-
-
-    /**
      * Get the projects
      *
      * @return array
@@ -437,28 +417,6 @@ class TicketController extends Controller {
 
     }
 
-
-    /**
-     * Get the options for the ticket status
-     *
-     * @return array
-     */
-    private function getStatusOptions(){
-        $options = json_decode(Option::get($this->_plugin . '.status'));
-        usort(
-            $options,
-            function ($a, $b) {
-                return ($a->order - $b->order);
-            }
-        );
-
-        $status = array();
-        foreach($options as $option){
-            $status[$option->id] = $option->label;
-        }
-
-        return $status;
-    }
 
     /**
      * Update the status of a task. This method is called from the tasks list

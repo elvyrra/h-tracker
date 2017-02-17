@@ -1,5 +1,5 @@
-<p> A new comment was left by {{ $author }} on the task #{{ $ticketId }} : </p>
+<p> {text key="h-tracker.notif-new-comment-txt" id="{$ticketId}" author="{$author}" } </p>
 
 <div>{{ $comment }}</div>
 
-See the task : <a href="{{ ROOT_URL }}#!{uri action='htracker-editTicket' ticketId='{$ticketId}'}">{{ $title }}</a>
+{text key="h-tracker.notif-see-the-task"} <a href="{{ ROOT_URL }}#!{uri action='htracker-editTicket' ticketId='{$ticketId}'}">{{ $title }}</a>

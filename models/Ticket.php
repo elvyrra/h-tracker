@@ -171,19 +171,27 @@ class Ticket extends Model {
     }
 
 
-    /**
-     * Save the ticket in the database
-     */
-    public function save() {
+    private function manageNotifications($method) {
         $plugin = Plugin::current();
         $sendNotif = false;
         $project = Project::getById($this->projectId);
         $author = App::session()->getUser()->username;
+        $users = self::getUsersOptions();
 
         if(empty($this->id)) {
-            parent::save();
-
             // creating a new ticket
+            parent::$method();
+
+            $statusOptions = self::getStatusOptions();
+            $targetUser = User::getById($this->target);
+
+            $details = array(
+                Lang::get($plugin->getName() . '.ticket-form-priority-label') => $this->priority,
+                Lang::get($plugin->getName() . '.ticket-form-status-label') => $statusOptions[$this->status],
+                Lang::get($plugin->getName() . '.ticket-form-target-label') => $targetUser ? $targetUser->username : ' - ',
+                Lang::get($plugin->getName() . '.ticket-form-dead-line-label') => date(Lang::get('main.date-format'), strtotime($this->deadLine))
+            );
+
             $sendNotif = true;
             $subject = Lang::get($plugin->getName() . '.notif-new-task', array(
                 'project' => $project->name
@@ -192,7 +200,8 @@ class Ticket extends Model {
                 'author' => $author,
                 'project' => $project->name,
                 'title' => $this->title,
-                'ticketId' => $this->id
+                'ticketId' => $this->id,
+                'details' => $details
             ));
         }
         else {
@@ -255,21 +264,38 @@ class Ticket extends Model {
                     ));
 
                     $sendNotif = true;
-                    $subject = Lang::get($plugin->getName() . '.notif-task-update', array(
-                        'project' => $project->name,
-                        'id' => $this->id,
-                        'author' => $author
-                    ));
 
-                    $content = View::make($plugin->getView('notifications/task-modification.tpl'), array(
-                        'author' => $author,
-                        'title' => $this->title,
-                        'ticketId' => $this->id
-                    ));
+                    if($oldValues->status !== $this->status && $this->status == self::STATUS_CLOSED_ID) {
+                        $subject = Lang::get($plugin->getName() . '.notif-task-closed', array(
+                            'project' => $project->name,
+                            'id' => $this->id,
+                            'author' => $author
+                        ));
+
+                        $content = View::make($plugin->getView('notifications/closed-task.tpl'), array(
+                            'author' => $author,
+                            'title' => $this->title,
+                            'ticketId' => $this->id
+                        ));
+                    }
+                    else {
+                        $subject = Lang::get($plugin->getName() . '.notif-task-update', array(
+                            'project' => $project->name,
+                            'id' => $this->id,
+                            'author' => $author
+                        ));
+
+                        $content = View::make($plugin->getView('notifications/task-modification.tpl'), array(
+                            'author' => $author,
+                            'title' => $this->title,
+                            'ticketId' => $this->id,
+                            'comments' => $comments
+                        ));
+                    }
                 }
             }
 
-            parent::save();
+            parent::$method();
         }
 
         // Send the notification of new ticket / ticket modification
@@ -288,5 +314,51 @@ class Ticket extends Model {
                         ->send();
             }
         }
+    }
+
+
+    /**
+     * Update the ticket in the database
+     */
+    public function update() {
+        $this->manageNotifications('update');
+    }
+
+    /**
+     * Save the ticket in the database
+     */
+    public function save() {
+        $this->manageNotifications('save');
+    }
+
+    public static function getStatusOptions(){
+        $options = json_decode(Option::get('h-tracker.status'));
+        usort(
+            $options,
+            function ($a, $b) {
+                return ($a->order - $b->order);
+            }
+        );
+
+        $status = array();
+        foreach($options as $option){
+            $status[$option->id] = $option->label;
+        }
+
+        return $status;
+    }
+
+
+    public static function getUsersOptions() {
+        $users = array_filter(User::getAll('id'), function($user) {
+            return $user->isAllowed(Plugin::current()->getName() . '.manage-ticket');
+        });
+
+        return array_map(
+            function ($a) {
+                return $a->username;
+            },
+            $users
+        );
     }
 }

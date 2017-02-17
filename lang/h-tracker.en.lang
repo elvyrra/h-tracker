@@ -83,5 +83,11 @@ settings-confirm-delete-status = "do you really want to delete this status ? If 
 
 ; NOTIFICATIONS
 notif-new-task = "[H-Tracker][{project}] : A new task has been created"
+notif-new-task-txt = "A new task has been created by {author} on the project {project} :"
 notif-task-update = "[H-Tracker][{project}] : The task #{id} has been modified by {author}"
+notif-task-update-txt = "The task #{id} has been modified by {author} :"
 notif-new-comment = "[H-Tracker][{project}] : New comment from {author} on the task #{id}"
+notif-new-comment-txt = "A new comment was left by {author} on the task #{id} :"
+notif-task-closed = "[H-Tracker][{project}] : The task #{id} has been closed by {author}"
+notif-task-closed-txt = "The task #{id} has been closed by {author}"
+notif-see-the-task = "See the task :"
