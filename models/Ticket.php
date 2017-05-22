@@ -186,7 +186,7 @@ class Ticket extends Model {
             $targetUser = User::getById($this->target);
 
             $details = array(
-                Lang::get($plugin->getName() . '.ticket-form-priority-label') => $this->priority,
+                Lang::get($plugin->getName() . '.ticket-form-priority-label') => Lang::get('h-tracker.ticket-priority-' . $this->priority),
                 Lang::get($plugin->getName() . '.ticket-form-status-label') => $statusOptions[$this->status],
                 Lang::get($plugin->getName() . '.ticket-form-target-label') => $targetUser ? $targetUser->username : ' - ',
                 Lang::get($plugin->getName() . '.ticket-form-dead-line-label') => date(Lang::get('main.date-format'), strtotime($this->deadLine))
@@ -302,8 +302,7 @@ class Ticket extends Model {
         if($sendNotif) {
             $recipients = array_filter(User::getAll('id'), function($user) use($plugin) {
                 return  $user->isAllowed($plugin->getName() . '.manage-ticket') &&
-                        // $user->id !== App::session()->getUser()->id;
-                    true;
+                        $user->id !== App::session()->getUser()->id;
             });
 
             foreach($recipients as $recipient) {

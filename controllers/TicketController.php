@@ -215,12 +215,18 @@ class TicketController extends Controller {
                     new SelectInput(array(
                         'name' => 'projectId',
                         'options' => $projects,
+                        'required' => true,
+                        'invitation' => ' - ',
                         'label' => Lang::get($this->_plugin . '.ticket-form-project-label'),
                     )),
 
 
                     new SelectInput(array(
                         'name'    => 'priority',
+                        'invitation' => ' - ',
+                        'default' => '-1',
+                        'emptyValue' => '-1',
+                        'required' => true,
                         'label'   => Lang::get($this->_plugin.'.ticket-form-priority-label'),
                         'options' => Ticket::getPrioritiesList(),
                     )),
@@ -382,12 +388,13 @@ class TicketController extends Controller {
         $content = View::make($this->getPlugin()->getView('notifications/new-comment.tpl'), array(
             'author' => $author,
             'ticketId' => $ticket->id,
-            'comment' => $comment->description,
+            'comment' => Parsedown::instance()->text($comment->description),
             'title' => $ticket->title,
         ));
 
         $recipients = array_filter(User::getAll('id'), function($user) {
-            return $user->isAllowed($this->_plugin . '.manage-ticket');
+            return  $user->isAllowed($this->_plugin . '.manage-ticket') &&
+                    $user->id !== App::session()->getUser()->id;
         });
 
         foreach($recipients as $recipient) {
