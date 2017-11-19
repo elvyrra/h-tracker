@@ -14,6 +14,9 @@ class ProjectController extends Controller{
         $list = new ItemList(array(
             'id' => 'htracker-project-list',
             'model' => 'Project',
+            'customize' => array(
+                'default' => ['name', 'description']
+            ),
             'controls' => array(
                 array(
                     'icon' => 'plus',
