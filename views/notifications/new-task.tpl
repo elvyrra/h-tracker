@@ -4,6 +4,6 @@
 
 <ul>
     {foreach($details as $key => $value)}
-        <li><b>{{ $key }}</b> : {{ $value }}
+        <li><b>{{ $key }}</b> : {{ $value }}</li>
     {/foreach}
 </ul>

@@ -51,6 +51,11 @@ class ProjectController extends Controller{
                     'display' => function($value, $field, $ticket){
                         return User::getById($value)->username;
                     },
+                    'search' => array(
+                        'type' => 'select',
+                        'options' => Ticket::getUsersOptions(),
+                        'invitation' => ' - ',
+                    )
                 ),
 
                 'ctime' => array(
@@ -110,7 +115,8 @@ class ProjectController extends Controller{
                     new HWidgets\MarkdownInput(array(
                         'name' => 'description',
                         'label' => Lang::get($this->_plugin . '.project-form-description-label'),
-                        'labelWidth' => 'auto'
+                        'labelWidth' => 'auto',
+                        'rows' => 10,
                     )),
 
                     new HiddenInput(array(

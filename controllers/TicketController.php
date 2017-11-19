@@ -45,6 +45,20 @@ class TicketController extends Controller {
                     'href' => App::router()->getUri('htracker-editProject', array('projectId' => 0)),
                     'target' => 'dialog',
                 ),
+                array(
+                    'icon' => 'download',
+                    'label' => 'Exporter',
+                    'href' => App::router()->getUri('htracker-index', array(), array(
+                        'export' => 1
+                    )),
+                    'target' => '_blank'
+                )
+            ),
+            'customize' => array(
+                'default' => array('id', 'title'),
+                'immutable' => array(
+                    'title'
+                )
             ),
             'lineClass' => function($line) {
                 if($line->isLate()) {
@@ -155,7 +169,7 @@ class TicketController extends Controller {
                         return $result;
                     },
                     'search'  => array(
-                        'type' => 'date'
+                        'type' => 'date-interval'//'type' => 'date'
                     )
                 ),
 
@@ -164,6 +178,10 @@ class TicketController extends Controller {
 
 
         $list = new ItemList($param);
+
+        if(App::request()->getParams('export')) {
+            return $list->export('csv');
+        }
 
         if(!$list->isRefreshing()) {
             // Add css file
